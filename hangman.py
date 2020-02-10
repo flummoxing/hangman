@@ -1,7 +1,6 @@
 # Author: Alexa Langen
 # Date: 2/1/20
 # Description: A game of hangman
-import time
 
 
 def print_word(word_list):
@@ -13,10 +12,11 @@ def print_word(word_list):
 
     print(str1, "\n")
 
+
 def letter_in_word(word, letter):
     """Checks if the letter is in the word."""
     for s in word:
-        if s == letter:
+        if s.upper() == letter.upper():
             return True
 
     return False
@@ -55,37 +55,44 @@ def update_word(secret_word, word_so_far, new_letter):
 
     return word_so_far
 
-secret_word = "HANGMAN" # Later let this be changed. Has spaces now for comparison
-word_so_far = hide_word(secret_word)
-guessed_so_far = "" # Keeps track of letters player has already guessed
-strikes = 0
 
-print("Welcome to Hangman! Try to guess the following word. You get 6 strikes! \n")
-print_word(word_so_far)
+play = True
 
-while word_so_far != secret_word and strikes != 6:
-    new_letter = input("Guess a letter (please use caps): \n")
-    time.sleep(1)
+while play:
+    secret_word = "HANGMAN" # Later let this be changed. Has spaces now for comparison
+    word_so_far = hide_word(secret_word)
+    secret_word_list = [c for c in secret_word] #To compare with word_so_far, which is a list.
+    guessed_so_far = "" # Keeps track of letters player has already guessed
+    strikes = 0
 
-    if already_guessed(guessed_so_far, new_letter):
-        print("You've already guessed that letter! Try again.")
-
-    elif letter_in_word(secret_word, new_letter):
-        word_so_far = update_word(secret_word, word_so_far, new_letter)
-        guessed_so_far += new_letter
-
-    elif not letter_in_word(secret_word, new_letter):
-        strikes += 1
-        guessed_so_far += new_letter
-        print("Nope! You get a strike! You have", strikes, "so far. \n")
-        print("Here are the letters you've guessed so far: ", guessed_so_far, "\n")
-
+    print("Welcome to Hangman! Try to guess the following word. You get 6 strikes! \n")
     print_word(word_so_far)
-    time.sleep(1)
 
-if word_so_far == secret_word:
-    print("You did it! The secret word was: ", secret_word)
+    while word_so_far != secret_word_list and strikes != 6:
+        new_letter = input("Guess a letter: \n")
 
-elif strikes == 6:
-    print("GAME OVER!")
+        if already_guessed(guessed_so_far, new_letter):
+            print("You've already guessed that letter! Try again.")
+
+        elif letter_in_word(secret_word, new_letter):
+            word_so_far = update_word(secret_word, word_so_far, new_letter)
+            guessed_so_far += new_letter
+
+        elif not letter_in_word(secret_word, new_letter):
+            strikes += 1
+            guessed_so_far += new_letter
+            print("Nope! You get a strike! You have", strikes, "so far. \n")
+            print("Here are the letters you've guessed so far: ", guessed_so_far, "\n")
+
+        print_word(word_so_far)
+
+    if word_so_far == secret_word_list:
+        print("You did it! The secret word was: ", secret_word)
+
+    elif strikes == 6:
+        print("GAME OVER!")
+
+    again = str(input("Would you like to play again with the same word? Type Y or N."))
+    if again.upper() == "N":
+        play = False
 
